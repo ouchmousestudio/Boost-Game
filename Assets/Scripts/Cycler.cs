@@ -5,7 +5,7 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class Cycler : MonoBehaviour
 {
-
+    [Header("Position Movement")]
     [SerializeField] Vector3 movementVector;
     [SerializeField] float cycleLength = 2f;
     [Range(0, 1)] [SerializeField] float phaseOffset;
@@ -13,6 +13,10 @@ public class Cycler : MonoBehaviour
     [Range(0, 1)]
     [SerializeField]
     float movementAmount;
+    [Header("Rotation")]
+    [Range(0, 360)]
+    [SerializeField]
+    float rotationAmount;
 
     Vector3 startingPos;
 
@@ -20,13 +24,12 @@ public class Cycler : MonoBehaviour
     void Start()
     {
         startingPos = transform.position;
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        //todo protect against divide by 0
         if (cycleLength <= Mathf.Epsilon) { return; }
         float cycles = Time.time / cycleLength; //grows from 0
         cycles = cycles + phaseOffset;
@@ -36,6 +39,7 @@ public class Cycler : MonoBehaviour
         movementAmount = (rawSine + 1f) / 2;
 
         Vector3 offset = movementAmount * movementVector;
+        //Position Movement
         transform.position = startingPos + offset;
     }
 }

@@ -26,8 +26,7 @@ public class Rocket : MonoBehaviour
     [SerializeField] float timeToWait = 1.3f;
 
     //Player states
-    enum State { Alive, Dying, Succeed }
-    State state = State.Alive;
+    bool isTransitioning;
 
     //Debug mode
     bool collissionsOff = false;
@@ -44,7 +43,7 @@ public class Rocket : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (state == State.Alive)
+        if (!isTransitioning)
         {
             //Respond to key inputs
             Thrust();
@@ -70,19 +69,26 @@ public class Rocket : MonoBehaviour
 
     private void Rotate()
     {
-        //manual control
-        rigidBody.freezeRotation = true;
+
 
         float frameDepRotation = rcsThrust * Time.deltaTime;
 
         if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
         {
-            transform.Rotate(Vector3.forward * frameDepRotation);
+            RocketRotation(frameDepRotation);
         }
         else if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
         {
-            transform.Rotate(-Vector3.forward * frameDepRotation);
+            RocketRotation(-frameDepRotation);
         }
+
+    }
+
+    private void RocketRotation(float frameDepRotation)
+    {
+        //resume physics
+        rigidBody.freezeRotation = true;
+        transform.Rotate(Vector3.forward * frameDepRotation);
         //stop
         rigidBody.freezeRotation = false;
     }
@@ -113,7 +119,7 @@ public class Rocket : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         //Only allow one collision
-        if (state != State.Alive || collissionsOff) { return; }
+        if (isTransitioning || collissionsOff) { return; }
 
         switch (collision.gameObject.tag)
         {
@@ -136,7 +142,7 @@ public class Rocket : MonoBehaviour
 
     private void DeathSequence()
     {
-        state = State.Dying;
+        isTransitioning = true;
         Invoke("LoadStartSceneRef", timeToWait);
         audioSource.Stop();
         audioSource.PlayOneShot(deathSFX);
@@ -145,7 +151,7 @@ public class Rocket : MonoBehaviour
 
     private void LevelComplete()
     {
-        state = State.Succeed;
+        isTransitioning = true;
         Invoke("LoadNextSceneRef", timeToWait);
         audioSource.PlayOneShot(levelCompleteSFX);
         levelCompleteVFX.Play();
