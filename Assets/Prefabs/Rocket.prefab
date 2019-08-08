@@ -58,7 +58,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 04c95983cdcb74cc1b4867ca96bbd65b, type: 2}
+  - {fileID: 2100000, guid: 6375259df39b648fba3126ab7bce2a85, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -150,7 +150,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 04c95983cdcb74cc1b4867ca96bbd65b, type: 2}
+  - {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -242,7 +242,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 04c95983cdcb74cc1b4867ca96bbd65b, type: 2}
+  - {fileID: 2100000, guid: 6375259df39b648fba3126ab7bce2a85, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -323,7 +323,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 5e2dc9fe3879d4108ab4739b031b270b, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.4
   m_Pitch: 1
@@ -439,6 +439,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rcsThrust: 100
   mainThrust: 20
+  mainEngineSFX: {fileID: 8300000, guid: 5e2dc9fe3879d4108ab4739b031b270b, type: 3}
+  deathSFX: {fileID: 8300000, guid: 51a09b80b5d164a898cb7f84db685f8c, type: 3}
+  levelCompleteSFX: {fileID: 8300000, guid: fb21d415c2a994e029eefa8d9d84da51, type: 3}
 --- !u!1 &7415738645533613490
 GameObject:
   m_ObjectHideFlags: 0
