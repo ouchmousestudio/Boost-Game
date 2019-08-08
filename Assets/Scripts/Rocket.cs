@@ -11,12 +11,19 @@ public class Rocket : MonoBehaviour
     AudioSource audioSource;
 
     //Serialized Fields
+    [Header("Rocket Parameters")]
     [SerializeField] float rcsThrust;
     [SerializeField] float mainThrust;
     [Header("Rocket Audio")]
     [SerializeField] AudioClip mainEngineSFX;
     [SerializeField] AudioClip deathSFX;
     [SerializeField] AudioClip levelCompleteSFX;
+    [Header("Particles")]
+    [SerializeField] ParticleSystem mainEngineVFX;
+    [SerializeField] ParticleSystem deathVFX;
+    [SerializeField] ParticleSystem levelCompleteVFX;
+
+    [SerializeField] float levelLoadDelay = 1.3f;
 
     enum State { Alive, Dying, Succeed }
     State state = State.Alive;
@@ -67,16 +74,18 @@ public class Rocket : MonoBehaviour
         else
         {
             audioSource.Stop();
+            mainEngineVFX.Stop();
         }
     }
 
     private void ApplyThrust()
     {
-        rigidBody.AddRelativeForce(Vector3.up * mainThrust);
+        rigidBody.AddRelativeForce(Vector3.up * mainThrust * Time.deltaTime);
         if (!audioSource.isPlaying)
         {
             audioSource.PlayOneShot(mainEngineSFX);
         }
+        mainEngineVFX.Play();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -95,18 +104,29 @@ public class Rocket : MonoBehaviour
                 //Refuel ship
                 break;
             case "Goal":
-                state = State.Succeed;
-                audioSource.PlayOneShot(levelCompleteSFX);
-                Invoke("LoadNextScene", 1f);
+                LevelComplete();
                 break;
             default:
-                state = State.Dying;
-                Invoke("LoadFirstLevel", 1f);
-                audioSource.Stop();
-                audioSource.PlayOneShot(deathSFX);
-                // Kill Player
+                DeathSequence();
                 break;
         }
+    }
+
+    private void DeathSequence()
+    {
+        state = State.Dying;
+        Invoke("LoadFirstLevel", levelLoadDelay);
+        audioSource.Stop();
+        audioSource.PlayOneShot(deathSFX);
+        deathVFX.Play();
+    }
+
+    private void LevelComplete()
+    {
+        state = State.Succeed;
+        Invoke("LoadNextScene", levelLoadDelay);
+        audioSource.PlayOneShot(levelCompleteSFX);
+        levelCompleteVFX.Play();
     }
 
     private void LoadFirstLevel()
