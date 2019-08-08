@@ -2,13 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class Rocket : MonoBehaviour
 {
     //Components
     Rigidbody rigidBody;
     AudioSource audioSource;
+    SceneLoader sceneLoader;
 
     //Serialized Fields
     [Header("Rocket Parameters")]
@@ -23,16 +23,22 @@ public class Rocket : MonoBehaviour
     [SerializeField] ParticleSystem deathVFX;
     [SerializeField] ParticleSystem levelCompleteVFX;
 
-    [SerializeField] float levelLoadDelay = 1.3f;
+    [SerializeField] float timeToWait = 1.3f;
 
+    //Player states
     enum State { Alive, Dying, Succeed }
     State state = State.Alive;
+
+    //Debug mode
+    bool collissionsOff = false;
+
 
     // Start is called before the first frame update
     void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
         audioSource = GetComponent<AudioSource>();
+        sceneLoader = FindObjectOfType<SceneLoader>();
     }
 
     // Update is called once per frame
@@ -43,6 +49,22 @@ public class Rocket : MonoBehaviour
             //Respond to key inputs
             Thrust();
             Rotate();
+            if (Debug.isDebugBuild)
+            {
+                DebugKeys();
+            }
+        }
+    }
+
+    private void DebugKeys()
+    {
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            sceneLoader.LoadNextScene();
+        }
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            collissionsOff = !collissionsOff;
         }
     }
 
@@ -91,7 +113,7 @@ public class Rocket : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         //Only allow one collision
-        if (state != State.Alive) { return; }
+        if (state != State.Alive || collissionsOff) { return; }
 
         switch (collision.gameObject.tag)
         {
@@ -115,7 +137,7 @@ public class Rocket : MonoBehaviour
     private void DeathSequence()
     {
         state = State.Dying;
-        Invoke("LoadFirstLevel", levelLoadDelay);
+        Invoke("LoadStartSceneRef", timeToWait);
         audioSource.Stop();
         audioSource.PlayOneShot(deathSFX);
         deathVFX.Play();
@@ -124,18 +146,16 @@ public class Rocket : MonoBehaviour
     private void LevelComplete()
     {
         state = State.Succeed;
-        Invoke("LoadNextScene", levelLoadDelay);
+        Invoke("LoadNextSceneRef", timeToWait);
         audioSource.PlayOneShot(levelCompleteSFX);
         levelCompleteVFX.Play();
     }
-
-    private void LoadFirstLevel()
+    private void LoadStartSceneRef()
     {
-        SceneManager.LoadScene(0);
+        sceneLoader.LoadStartScene();
     }
-
-    private void LoadNextScene()
+    private void LoadNextSceneRef()
     {
-        SceneManager.LoadScene(1); //todo add more levels
+        sceneLoader.LoadNextScene();
     }
 }

@@ -8,6 +8,7 @@ public class Cycler : MonoBehaviour
 
     [SerializeField] Vector3 movementVector;
     [SerializeField] float cycleLength = 2f;
+    [Range(0, 1)] [SerializeField] float phaseOffset;
 
     [Range(0, 1)]
     [SerializeField]
@@ -28,9 +29,8 @@ public class Cycler : MonoBehaviour
         //todo protect against divide by 0
         if (cycleLength <= Mathf.Epsilon) { return; }
         float cycles = Time.time / cycleLength; //grows from 0
-
+        cycles = cycles + phaseOffset;
         const float tau = Mathf.PI * 2; //around 2.68
-
         float rawSine = Mathf.Sin(cycles * tau);
 
         movementAmount = (rawSine + 1f) / 2;
